@@ -1,25 +1,4 @@
-// src/services/apiService.js
-
-import axios from 'axios';
-
-const apiClient = axios.create({
-    baseURL: 'https://localhost:7293/api', // Ajusta la URL base según tu configuración
-    headers: {
-        'Content-Type': 'application/json',
-        'X-Api-Key': 'prueba' // Añade tu API key aquí
-    }
-});
-
-// Puedes añadir interceptores si es necesario
-apiClient.interceptors.request.use(
-    config => {
-        // Puedes añadir lógica aquí si es necesario
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
-    }
-);
+import apiClient from '@/axios';
 
 export default {
     getUsers() {

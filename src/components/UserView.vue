@@ -5,10 +5,10 @@
         :users="users"
         @createUser="openUserForm"
         @editUser="editUser"
-        @deleteUser="deleteUser"
+        @deleteUser="confirmDeleteUser"
         @fileChanged="confirmUpload"
-        @exportToExcel="exportarAExcel"
-        @exportToCsv="exportarACsv"
+        @exportToExcel="exportToExcel"
+        @exportToCsv="exportToCsv"
       ></user-table>
     </v-row>
 
@@ -30,6 +30,19 @@
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="closeConfirmDialog">Cancelar</v-btn>
           <v-btn color="blue darken-1" text @click="uploadFile">Cargar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Diálogo para confirmar eliminación de usuario -->
+    <v-dialog v-model="confirmDeleteDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="headline">Confirmar Eliminación</v-card-title>
+        <v-card-text>¿Estás seguro de que deseas eliminar este usuario?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="closeConfirmDeleteDialog">Cancelar</v-btn>
+          <v-btn color="blue darken-1" text @click="deleteUserM">Eliminar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -77,8 +90,10 @@ export default {
       isEdit: false,
       dialog: false,
       confirmDialog: false,
+      confirmDeleteDialog: false,
       fileToUpload: null,
       userToUpload: null,
+      userToDelete: null,
     };
   },
   methods: {
@@ -124,6 +139,19 @@ export default {
       this.fileToUpload = null;
       this.userToUpload = null;
     },
+    confirmDeleteUser(userId) {
+      this.userToDelete = userId;
+      this.confirmDeleteDialog = true;
+    },
+    closeConfirmDeleteDialog() {
+      this.confirmDeleteDialog = false;
+      this.userToDelete = null;
+    },
+    deleteUserM() {
+      this.deleteUser(this.userToDelete);
+      this.confirmDeleteDialog = false;
+      this.userToDelete = null;
+    },
     exportToCsv() {
       generateCsvReport(this.users);
       this.showSnackbar('Informe CSV generado', 'success', 'mdi-check');
@@ -131,10 +159,7 @@ export default {
     exportToExcel() {
       generateExcelReport(this.users);
       this.showSnackbar('Informe Excel generado', 'success', 'mdi-check');
-    },
-    mounted() {
-      this.fetchTree();
-    },
+    }
   }
 };
 </script>

@@ -1,27 +1,27 @@
 <template>
     <v-container>
       <v-toolbar flat>
-        <v-toolbar-title>Gestión de Usuarios</v-toolbar-title>
+        <v-toolbar-title>User Management</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn color="success" @click="$emit('exportToExcel')">Exportar a Excel</v-btn>
-        <v-btn color="info" class="ml-2" @click="$emit('exportToCsv')">Exportar a CSV</v-btn>
+        <v-btn color="success" @click="$emit('exportToExcel')">Export to Excel</v-btn>
+        <v-btn color="info" class="ml-2" @click="$emit('exportToCsv')">Export to CSV</v-btn>
       </v-toolbar>
       <v-card title="Usuarios" flat>
         <template v-slot:text>
           <v-text-field
             v-model="search"
-            label="Buscar"
+            label="Search"
             prepend-inner-icon="mdi-magnify"
             variant="outlined"
             hide-details
             single-line
           ></v-text-field>
         </template>
-        <v-data-table :headers="headers" :items="filteredUsers" :search="search" item-key="id" class="elevation-1">
+        <v-data-table :headers="headers" :items="users" :search="search" item-key="id" class="elevation-1">
           <template v-slot:top>
             <v-toolbar flat>
               <v-spacer></v-spacer>
-              <v-btn color="primary" @click="$emit('createUser')">Agregar Usuario</v-btn>
+              <v-btn color="primary" @click="$emit('createUser')">Add User</v-btn>
             </v-toolbar>
           </template>
           <template v-slot:[`item.pdfFilePath`]="{ item, index }">
@@ -31,7 +31,7 @@
                 v-if="!item.pdfFilePath"
                 :id="'fileInput' + index"
                 v-model="item.file"
-                label="Subir"
+                label="Upload"
                 prepend-icon="mdi-upload"
                 :show-size="true"
                 accept=".pdf,.jpg,.png,.docx,.xlsx"
@@ -57,7 +57,7 @@
   
   <script>
   import { useUserStore } from '@/stores/userStore';
-  import { computed, ref } from 'vue';
+  import { ref } from 'vue';
   
   export default {
     props: {
@@ -69,18 +69,10 @@
     setup() {
       const userStore = useUserStore();
       const search = ref('');
-      const filteredUsers = computed(() => {
-        return userStore.users.filter(user =>
-          user.name.toLowerCase().includes(search.value.toLowerCase()) ||
-          user.email.toLowerCase().includes(search.value.toLowerCase())
-        );
-      });
-  
       const { triggerFileInput, removeFile } = userStore;
   
       return {
         search,
-        filteredUsers,
         triggerFileInput,
         removeFile
       };
@@ -88,17 +80,20 @@
     data() {
       return {
         headers: [
-          { key: 'name', title: 'Nombre' },
-          { key: 'email', title: 'Correo Electrónico' },
+          { key: 'name', title: 'Name' },
+          { key: 'email', title: 'Email' },
           { key: 'pdfFilePath', title: 'Archivo' },
-          { key: 'actions', title: 'Acciones' },
+          { key: 'actions', title: 'Actions' },
         ]
       };
     },
     methods: {
       onFileChange(item) {
-        this.$emit('fileChanged', item);
-      },
+      if (Array.isArray(item.file)) {
+        item.file = item.file[0];
+      }
+      this.$emit('fileChanged', item);
+    },
       truncateFilePath(filePath) {
         if (filePath.length > 20) {
           return filePath.substring(0, 20) + '...';
