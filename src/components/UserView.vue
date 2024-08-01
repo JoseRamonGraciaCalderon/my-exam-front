@@ -132,7 +132,6 @@ export default {
     },
     uploadFile() {
       const formData = new FormData();
-      console.log(this.fileToUpload);
       formData.append('file', this.fileToUpload);
       this.uploadUserFile(this.userToUpload.id, formData);
       this.confirmDialog = false;
