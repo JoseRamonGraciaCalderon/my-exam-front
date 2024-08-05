@@ -8,7 +8,7 @@
           <tree-view></tree-view>
         </v-col>
         <v-col cols="9">
-        <user-home></user-home>
+        <user-view></user-view>
       </v-col>
     </v-row>
       </v-container>
@@ -20,14 +20,14 @@
 <script>
 import AppHeader from '@/layout/Header.vue';
 import AppFooter from '@/layout/Footer.vue';
-import UserHome from '@/components/UserView.vue';
+import UserView from '@/components/UserView.vue';
 import TreeView from '@/components/TreeView.vue';
 export default {
   name: 'App',
   components: {
     AppHeader,
     AppFooter,
-    UserHome,
+    UserView,
     TreeView
   },
 };
